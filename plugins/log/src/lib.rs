@@ -168,6 +168,7 @@ pub struct Builder {
     max_file_size: u128,
     targets: Vec<LogTarget>,
     log_name: Option<String>,
+    assign_logger: Box<dyn FnOnce(log::LevelFilter, Box<dyn log::Log>) + Send + Sync>,
 }
 
 impl Default for Builder {
@@ -191,6 +192,10 @@ impl Default for Builder {
             max_file_size: DEFAULT_MAX_FILE_SIZE,
             targets: DEFAULT_LOG_TARGETS.into(),
             log_name: None,
+            assign_logger: Box::new(|level_filter, logger| {
+                log::set_max_level(level_filter);
+                log::set_boxed_logger(logger).expect("failed to set logger");
+            }),
         }
     }
 }
@@ -256,6 +261,14 @@ impl Builder {
 
     pub fn target(mut self, target: LogTarget) -> Self {
         self.targets.push(target);
+        self
+    }
+
+    pub fn custom_assigner(
+        mut self,
+        assign_logger: impl FnOnce(log::LevelFilter, Box<dyn log::Log>) + Send + Sync + 'static,
+    ) -> Self {
+        self.assign_logger = Box::new(assign_logger);
         self
     }
 
@@ -368,7 +381,8 @@ impl Builder {
                     });
                 }
 
-                self.dispatch.apply()?;
+                let (max_level, logger) = self.dispatch.into_log();
+                (self.assign_logger)(max_level, logger);
 
                 Ok(())
             })
