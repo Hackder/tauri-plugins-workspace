@@ -1,5 +1,11 @@
 # Changelog
 
+## \[2.6.2]
+
+### bug
+
+- [`0bc5d588`](https://github.com/tauri-apps/plugins-workspace/commit/0bc5d5887420ba1eb718254490b7995c771c0447) ([#2572](https://github.com/tauri-apps/plugins-workspace/pull/2572) by [@Legend-Master](https://github.com/tauri-apps/plugins-workspace/../../Legend-Master)) Fix `timeout` passed to `check` gets re-used by `download` and `downloadAndinstall`
+
 ## \[2.6.1]
 
 - [`12c4537b`](https://github.com/tauri-apps/plugins-workspace/commit/12c4537b8e4fed29b415ff817434b664c0596dac) ([#2541](https://github.com/tauri-apps/plugins-workspace/pull/2541) by [@lucasfernog](https://github.com/tauri-apps/plugins-workspace/../../lucasfernog)) Add support to the `riscv64` architecture.
